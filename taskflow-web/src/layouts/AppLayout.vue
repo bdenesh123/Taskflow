@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { useTheme } from "../composables/useTheme";
+import {
+  LayoutDashboard,
+  FolderKanban,
+  CheckSquare,
+  Users,
+} from "lucide-vue-next";
 
 const { preference, setPreference } = useTheme();
 
 const navigation = [
-  { label: "Dashboard", icon: "▦", to: "/" },
-  { label: "Projects", icon: "▤", to: "/projects" },
-  { label: "My tasks", icon: "✓", to: "/projects" },
-  { label: "Team members", icon: "♧", to: "/projects" },
+  { label: "Dashboard", icon: LayoutDashboard, to: "/" },
+  { label: "Projects", icon: FolderKanban, to: "/projects" },
+  { label: "My tasks", icon: CheckSquare, to: "/projects" },
+  { label: "Team members", icon: Users, to: "/projects" },
 ];
 </script>
 
@@ -48,7 +54,7 @@ const navigation = [
           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition"
           active-class="bg-background font-medium shadow-sm"
         >
-          <span class="w-5 text-center text-base">{{ item.icon }}</span>
+          <component :is="item.icon" :size="18" :stroke-width="1.75" />
           {{ item.label }}
         </RouterLink>
       </nav>

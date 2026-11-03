@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { FolderKanban } from "lucide-vue-next";
+</script>
+
 <template>
   <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
     <!-- Page heading -->
@@ -46,9 +50,9 @@
       class="mt-8 rounded-2xl border border-border bg-surface px-6 py-16 text-center"
     >
       <div
-        class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-border text-xl"
+        class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-border text-muted"
       >
-        ▤
+        <FolderKanban :size="24" :stroke-width="1.5" />
       </div>
 
       <h2 class="mt-4 text-lg font-semibold">Your projects will appear here</h2>

@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+import { User } from '../../users/models/user.model';
 
 export class Task extends Model {
   id!: string;
@@ -16,4 +17,15 @@ export class Task extends Model {
 
   static tableName = 'tasks';
   static idColumn = 'id';
+
+  static relationMappings = {
+    assignee: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: User,
+      join: {
+        from: 'tasks.assignee_id',
+        to: 'users.id',
+      },
+    },
+  };
 }

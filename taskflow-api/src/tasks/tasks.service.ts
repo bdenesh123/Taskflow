@@ -105,6 +105,10 @@ export class TasksService {
     return Task.query()
       .where('project_id', projectId)
       .whereNull('deleted_at')
+      .withGraphFetched('assignee')
+      .modifyGraph('assignee', (builder) => {
+        builder.select('id', 'name', 'email', 'avatar_url');
+      })
       .orderBy('created_at', 'desc');
   }
 

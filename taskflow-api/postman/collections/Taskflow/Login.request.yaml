@@ -6,7 +6,7 @@ body:
   type: json
   content: |-
     {
-      "email": "alex@example.com",
+      "email": "taylor@example.com",
       "password": "{{testPassword}}"
     }
 order: 3000
