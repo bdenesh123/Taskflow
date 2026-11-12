@@ -27,3 +27,33 @@ export async function login(
 
   return response.data;
 }
+
+export interface RegisterCredentials {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export async function register(
+  credentials: RegisterCredentials,
+): Promise<LoginResponse> {
+  const response = await apiClient.post<LoginResponse>(
+    "/auth/register",
+    credentials,
+  );
+
+  return response.data;
+}
+
+export async function deactivateAccount(
+  password: string,
+): Promise<{ message: string }> {
+  const response = await apiClient.delete<{ message: string }>(
+    "/auth/account",
+    {
+      data: { password },
+    },
+  );
+
+  return response.data;
+}

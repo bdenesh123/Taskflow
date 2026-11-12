@@ -13,6 +13,7 @@ import { Project } from './models/project.model';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { AddProjectMemberDto } from './dto/add-project-member.dto';
+import { TransferProjectOwnershipDto } from './dto/transfer-project-ownership.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -285,6 +286,81 @@ export class ProjectsService {
 
       return {
         message: 'Project member removed successfully',
+      };
+    });
+  }
+
+  async transferOwnership(
+    ownerId: string,
+    projectId: string,
+    dto: TransferProjectOwnershipDto,
+  ) {
+    return this.knex.transaction(async (trx) => {
+      // 1. Retrieve and lock the active project.
+      const project = await trx('projects')
+        .where({ id: projectId })
+        .whereNull('deleted_at')
+        .forUpdate()
+        .first();
+
+      if (!project) {
+        throw new NotFoundException('Project not found');
+      }
+
+      // 2. Only the current owner can transfer ownership.
+      if (project.owner_id !== ownerId) {
+        throw new ForbiddenException(
+          'Only the project owner can transfer ownership',
+        );
+      }
+
+      // 3. Prevent transferring ownership to yourself.
+      if (ownerId === dto.new_owner_id) {
+        throw new BadRequestException('You are already the project owner');
+      }
+
+      // 4. Verify the new owner is an existing project member.
+      const newOwnerMembership = await trx('project_members')
+        .where({
+          project_id: projectId,
+          user_id: dto.new_owner_id,
+        })
+        .forUpdate()
+        .first();
+
+      if (!newOwnerMembership) {
+        throw new BadRequestException(
+          'The new owner must already be a member of this project',
+        );
+      }
+
+      // 5. Update the project's actual owner.
+      await trx('projects').where({ id: projectId }).update({
+        owner_id: dto.new_owner_id,
+        updated_at: new Date(),
+      });
+
+      // 6. Demote the previous owner.
+      await trx('project_members')
+        .where({
+          project_id: projectId,
+          user_id: ownerId,
+        })
+        .update({ role: 'member' });
+
+      // 7. Promote the new owner.
+      await trx('project_members')
+        .where({
+          project_id: projectId,
+          user_id: dto.new_owner_id,
+        })
+        .update({ role: 'owner' });
+
+      return {
+        message: 'Project ownership transferred successfully',
+        project_id: projectId,
+        previous_owner_id: ownerId,
+        new_owner_id: dto.new_owner_id,
       };
     });
   }

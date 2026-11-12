@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Project } from "../../../api/projects";
+import { formatDate } from "../../utils/date";
+import DatePicker from "./DatePicker.vue";
 
 defineProps<{
   project: Project;
@@ -39,7 +41,7 @@ defineEmits<{
 
       <button
         type="button"
-        class="shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
+        class="cursor-pointer shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
         @click="$emit('openEditForm')"
       >
         Edit project
@@ -141,18 +143,11 @@ defineEmits<{
             Due date
           </label>
 
-          <input
+          <DatePicker
             id="edit-project-due-date"
-            :value="editDueDate"
-            @input="
-              $emit(
-                'update:editDueDate',
-                ($event.target as HTMLInputElement).value,
-              )
-            "
-            type="date"
-            class="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
+            :model-value="editDueDate"
             :disabled="isSavingProject"
+            @update:model-value="$emit('update:editDueDate', $event ?? '')"
           />
         </div>
 
@@ -171,7 +166,7 @@ defineEmits<{
         <div class="flex justify-end gap-3">
           <button
             type="button"
-            class="rounded-lg border border-border px-4 py-2 text-sm transition-colors hover:bg-background disabled:opacity-50"
+            class="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm transition-colors hover:bg-background disabled:opacity-50"
             :disabled="isSavingProject"
             @click="$emit('cancelEdit')"
           >
@@ -180,7 +175,7 @@ defineEmits<{
 
           <button
             type="submit"
-            class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+            class="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="isSavingProject || !editName.trim()"
           >
             {{ isSavingProject ? "Saving..." : "Save changes" }}
@@ -200,7 +195,11 @@ defineEmits<{
       <span
         class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm"
       >
-        {{ project.due_date ? `Due ${project.due_date}` : "No due date" }}
+        {{
+          project.due_date
+            ? `Due ${formatDate(project.due_date)}`
+            : "No due date"
+        }}
       </span>
     </div>
   </section>

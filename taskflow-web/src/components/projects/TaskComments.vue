@@ -122,7 +122,7 @@ defineEmits<{
           >
             <button
               type="button"
-              class="rounded-lg px-3 py-1.5 text-sm text-muted transition-colors hover:bg-sidebar hover:text-foreground"
+              class="cursor-pointer rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-sidebar focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               @click="$emit('editComment', comment)"
             >
               Edit
@@ -131,7 +131,7 @@ defineEmits<{
             <button
               type="button"
               :disabled="deletingCommentId === comment.id"
-              class="rounded-lg px-3 py-1.5 text-sm text-red-600 transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
+              class="cursor-pointer rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-sidebar focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
               @click="$emit('deleteComment', comment.id)"
             >
               {{ deletingCommentId === comment.id ? "Deleting..." : "Delete" }}
@@ -180,7 +180,7 @@ defineEmits<{
           <div class="flex justify-end gap-2">
             <button
               type="button"
-              class="rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
+              class="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
               :disabled="isUpdatingComment"
               @click="$emit('cancelEditComment')"
             >
@@ -189,7 +189,7 @@ defineEmits<{
 
             <button
               type="button"
-              class="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+              class="cursor-pointer rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
               :disabled="isUpdatingComment || !editCommentContent.trim()"
               @click="$emit('submitUpdateComment')"
             >
@@ -199,14 +199,17 @@ defineEmits<{
         </div>
 
         <!-- Normal comment display -->
-        <p v-else class="whitespace-pre-wrap text-sm leading-6">
+        <p
+          v-else
+          class="border-t border-border pt-3 whitespace-pre-wrap text-sm leading-6"
+        >
           {{ comment.content }}
         </p>
       </div>
     </div>
 
     <!-- Add comment form -->
-    <div class="mt-6 rounded-xl border border-border p-4">
+    <div class="mt-6 rounded-xl border border-border bg-surface p-5">
       <h4 class="mb-3 text-sm font-semibold">Add a comment</h4>
 
       <form @submit.prevent="$emit('submitComment')" class="space-y-3">
@@ -243,7 +246,7 @@ defineEmits<{
           <button
             type="submit"
             :disabled="isCreatingComment || !newCommentContent.trim()"
-            class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+            class="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {{ isCreatingComment ? "Posting..." : "Post comment" }}
           </button>

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -14,10 +15,17 @@ import {
   CurrentUser,
   type JwtPayload,
 } from './decorators/current-user.decorator';
+import { RegisterDto } from './dto/register.dto';
+import { DeactivateAccountDto } from './dto/deactivate-account.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('register')
+  register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto);
+  }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -29,5 +37,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   getProfile(@CurrentUser() user: JwtPayload) {
     return { user };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('account')
+  deactivateAccount(
+    @CurrentUser('sub') userId: string,
+    @Body() dto: DeactivateAccountDto,
+  ) {
+    return this.authService.deactivateAccount(userId, dto.password);
   }
 }

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Task } from "../../../api/tasks";
 import type { ProjectMember } from "../../../api/projects";
+import { formatDate } from "../../utils/date";
+import DatePicker from "../projects/DatePicker.vue";
 
 defineProps<{
   // Task data
@@ -95,7 +97,7 @@ defineEmits<{
 
       <button
         type="button"
-        class="shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
+        class="cursor-pointer shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
         @click="$emit('openCreateTaskForm')"
       >
         + Create task
@@ -206,7 +208,7 @@ defineEmits<{
         </div>
 
         <!-- Status and priority -->
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label for="task-status" class="mb-2 block text-sm font-medium">
               Status
@@ -266,18 +268,11 @@ defineEmits<{
             Due date
           </label>
 
-          <input
+          <DatePicker
             id="task-due-date"
-            :value="newTaskDueDate"
-            type="date"
-            class="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
+            :model-value="newTaskDueDate"
             :disabled="isCreatingTask"
-            @input="
-              $emit(
-                'update:newTaskDueDate',
-                ($event.target as HTMLInputElement).value,
-              )
-            "
+            @update:model-value="$emit('update:newTaskDueDate', $event ?? '')"
           />
         </div>
 
@@ -348,101 +343,106 @@ defineEmits<{
     </div>
 
     <!-- Task list -->
-    <div v-else class="divide-y divide-border rounded-xl border border-border">
-      <div v-for="task in tasks" :key="task.id">
-        <!-- Task row -->
-        <div
-          class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <!-- Task information -->
-          <div class="min-w-0">
-            <p class="truncate text-sm font-medium">
-              {{ task.title }}
-            </p>
+    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div
+        v-for="task in tasks"
+        :key="task.id"
+        class="flex min-h-52 flex-col rounded-xl border border-border bg-surface p-5 transition-colors hover:border-muted"
+      >
+        <!-- Status and priority -->
+        <div class="flex items-center justify-between gap-2">
+          <span
+            class="rounded-md px-2.5 py-1 text-xs font-medium capitalize"
+            :class="{
+              'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300':
+                task.status === 'todo',
+              'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300':
+                task.status === 'in_progress',
+              'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300':
+                task.status === 'done',
+            }"
+          >
+            {{ task.status.replace("_", " ") }}
+          </span>
 
-            <p class="mt-1 text-sm text-muted">
-              {{ task.description || "No description" }}
-            </p>
-
-            <!-- Assignee and due date -->
-            <div
-              class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted"
-            >
-              <span>
-                {{
-                  task.assignee
-                    ? `Assigned to ${task.assignee.name}`
-                    : "Unassigned"
-                }}
-              </span>
-
-              <span>
-                {{ task.due_date ? `Due ${task.due_date}` : "No due date" }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Status, priority and Edit button -->
-          <div class="flex shrink-0 items-center gap-2">
-            <!-- Status badge -->
-            <span
-              class="rounded-md px-2.5 py-1 text-xs font-medium"
-              :class="{
-                'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300':
-                  task.status === 'todo',
-                'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300':
-                  task.status === 'in_progress',
-                'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300':
-                  task.status === 'done',
-              }"
-            >
-              {{ task.status.replace("_", " ") }}
-            </span>
-
-            <!-- Priority badge -->
-            <span
-              class="rounded-md px-2.5 py-1 text-xs font-medium"
-              :class="{
-                'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300':
-                  task.priority === 'low',
-                'bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300':
-                  task.priority === 'medium',
-                'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300':
-                  task.priority === 'high',
-              }"
-            >
-              {{ task.priority }}
-            </span>
-
-            <!-- Edit button -->
-            <button
-              type="button"
-              class="rounded-lg border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-background"
-              @click="$emit('openEditTaskForm', task)"
-            >
-              Edit
-            </button>
-            <button
-              type="button"
-              :disabled="deletingTaskId === task.id"
-              class="rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
-              @click="$emit('deleteTask', task.id)"
-            >
-              {{ deletingTaskId === task.id ? "Deleting..." : "Delete" }}
-            </button>
-            <button
-              type="button"
-              class="rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground"
-              @click="$emit('viewTaskComments', task.id)"
-            >
-              View comments
-            </button>
-          </div>
+          <span
+            class="rounded-md px-2.5 py-1 text-xs font-medium capitalize"
+            :class="{
+              'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300':
+                task.priority === 'low',
+              'bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300':
+                task.priority === 'medium',
+              'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300':
+                task.priority === 'high',
+            }"
+          >
+            {{ task.priority }}
+          </span>
         </div>
+
+        <!-- Task information -->
+        <div class="mt-4 flex-1">
+          <h3 class="text-sm font-semibold">
+            {{ task.title }}
+          </h3>
+
+          <p class="mt-2 whitespace-pre-line break-words text-sm text-muted">
+            {{ task.description || "No description provided." }}
+          </p>
+        </div>
+
+        <!-- Assignee and due date -->
+        <div
+          class="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted"
+        >
+          <span>
+            {{
+              task.assignee ? `Assigned to ${task.assignee.name}` : "Unassigned"
+            }}
+          </span>
+
+          <span>
+            {{
+              task.due_date ? `Due ${formatDate(task.due_date)}` : "No due date"
+            }}
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-4">
+          <!-- Edit -->
+          <button
+            type="button"
+            class="cursor-pointer rounded-lg border border-border bg-background px-2 py-2 text-xs font-medium text-foreground transition-colors hover:bg-sidebar focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            @click="$emit('openEditTaskForm', task)"
+          >
+            Edit
+          </button>
+
+          <!-- View comments -->
+          <button
+            type="button"
+            class="cursor-pointer rounded-lg border border-border bg-background px-2 py-2 text-xs font-medium text-foreground transition-colors hover:bg-sidebar focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            @click="$emit('viewTaskComments', task.id)"
+          >
+            View comments
+          </button>
+
+          <!-- Delete -->
+          <button
+            type="button"
+            :disabled="deletingTaskId === task.id"
+            class="cursor-pointer rounded-lg border border-border bg-background px-2 py-2 text-xs font-medium text-foreground transition-colors hover:bg-sidebar focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+            @click="$emit('deleteTask', task.id)"
+          >
+            {{ deletingTaskId === task.id ? "Deleting..." : "Delete" }}
+          </button>
+        </div>
+
         <!-- Edit task form -->
         <div
           v-if="editingTaskId === task.id"
-          class="border-t border-border bg-background p-5"
+          class="-mx-5 -mb-5 mt-4 rounded-b-xl border-t border-border bg-background px-5 py-4"
         >
           <h3 class="font-semibold">Edit task</h3>
 
@@ -451,7 +451,7 @@ defineEmits<{
           </p>
 
           <form
-            class="mt-5 space-y-5"
+            class="mt-4 space-y-4"
             @submit.prevent="$emit('submitUpdateTask')"
           >
             <!-- Title -->
@@ -608,17 +608,12 @@ defineEmits<{
                 Due date
               </label>
 
-              <input
-                :id="`edit-task-due-date-${task.id}`"
-                :value="editTaskDueDate"
-                type="date"
-                class="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm"
+              <DatePicker
+                id="edit-task-due-date"
+                :model-value="editTaskDueDate"
                 :disabled="isUpdatingTask"
-                @input="
-                  $emit(
-                    'update:editTaskDueDate',
-                    ($event.target as HTMLInputElement).value,
-                  )
+                @update:model-value="
+                  $emit('update:editTaskDueDate', $event ?? '')
                 "
               />
             </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { getProjects, createProject, type Project } from "../../api/projects";
+import DatePicker from "../components/projects/DatePicker.vue";
 
 const projects = ref<Project[]>([]);
 const isLoading = ref(true);
@@ -79,7 +80,7 @@ onMounted(loadProjects);
 
       <button
         type="button"
-        class="shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
+        class="cursor-pointer shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
         @click="showCreateModal = true"
       >
         + Create project
@@ -226,12 +227,7 @@ onMounted(loadProjects);
             >
               Due date <span class="text-muted">(optional)</span>
             </label>
-            <input
-              id="project-due-date"
-              v-model="projectDueDate"
-              type="date"
-              class="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-muted"
-            />
+            <DatePicker id="project-due-date" v-model="projectDueDate" />
           </div>
 
           <p v-if="createError" role="alert" class="text-sm text-red-500">
@@ -241,7 +237,7 @@ onMounted(loadProjects);
           <div class="flex justify-end gap-3 pt-2">
             <button
               type="button"
-              class="rounded-lg border border-border px-4 py-2.5 text-sm font-medium hover:bg-background"
+              class="cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm font-medium hover:bg-background"
               @click="showCreateModal = false"
             >
               Cancel
@@ -249,22 +245,12 @@ onMounted(loadProjects);
             <button
               type="submit"
               :disabled="isCreating"
-              class="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+              class="cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {{ isCreating ? "Creating..." : "Create project" }}
             </button>
           </div>
         </form>
-
-        <div class="mt-8 flex justify-end">
-          <button
-            type="button"
-            class="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-background"
-            @click="showCreateModal = false"
-          >
-            Close
-          </button>
-        </div>
       </section>
     </div>
   </Teleport>

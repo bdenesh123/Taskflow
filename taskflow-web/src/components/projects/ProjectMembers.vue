@@ -44,7 +44,7 @@ defineEmits<{
 
       <button
         type="button"
-        class="shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
+        class="cursor-pointer shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-80"
         @click="$emit('addMember')"
       >
         + Add member
@@ -181,33 +181,49 @@ defineEmits<{
     </div>
 
     <!-- Members list -->
-    <div v-else class="divide-y divide-border rounded-xl border border-border">
+    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       <div
         v-for="member in members"
         :key="member.user_id"
-        class="flex items-center justify-between gap-4 p-4"
+        class="flex min-h-36 flex-col justify-between rounded-xl border border-border bg-surface p-5 transition-colors hover:border-muted"
       >
-        <div class="min-w-0">
-          <p class="truncate text-sm font-medium">{{ member.name }}</p>
-          <p class="mt-1 truncate text-sm text-muted">{{ member.email }}</p>
-        </div>
+        <!-- Member information -->
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="truncate text-sm font-semibold">
+              {{ member.name }}
+            </p>
 
-        <div class="flex shrink-0 items-center gap-3">
+            <p class="mt-1 break-all text-sm text-muted">
+              {{ member.email }}
+            </p>
+          </div>
+
+          <!-- Role badge -->
           <span
-            class="rounded-md border border-border bg-surface px-2.5 py-1 text-xs capitalize"
+            class="shrink-0 rounded-md border border-border bg-background px-2.5 py-1 text-xs capitalize"
           >
             {{ member.role }}
           </span>
+        </div>
 
+        <!-- Actions -->
+        <div
+          v-if="member.role !== 'owner'"
+          class="mt-4 flex justify-end border-t border-border pt-4"
+        >
           <button
-            v-if="member.role !== 'owner'"
             type="button"
-            class="rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-50"
+            class="cursor-pointer rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-sidebar focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="removingUserId !== ''"
             @click="$emit('removeMember', member.user_id)"
           >
             {{ removingUserId === member.user_id ? "Removing..." : "Remove" }}
           </button>
+        </div>
+
+        <div v-else class="mt-4 border-t border-border pt-4">
+          <p class="text-xs text-muted">Project owner</p>
         </div>
       </div>
     </div>

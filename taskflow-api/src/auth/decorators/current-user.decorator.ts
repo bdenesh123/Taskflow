@@ -13,9 +13,9 @@ type AuthenticatedRequest = Request & {
 };
 
 export const CurrentUser = createParamDecorator(
-  (_data: unknown, context: ExecutionContext): JwtPayload => {
+  (data: keyof JwtPayload | undefined, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
-    return request.user;
+    return data ? request.user[data] : request.user;
   },
 );

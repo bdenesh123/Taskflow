@@ -18,6 +18,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectsService } from './projects.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { AddProjectMemberDto } from './dto/add-project-member.dto';
+import { TransferProjectOwnershipDto } from './dto/transfer-project-ownership.dto';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
@@ -74,5 +75,14 @@ export class ProjectsController {
     @Param('userId') userId: string,
   ) {
     return this.projectsService.removeMember(user.sub, id, userId);
+  }
+
+  @Patch(':projectId/transfer-ownership')
+  transferOwnership(
+    @CurrentUser('sub') userId: string,
+    @Param('projectId') projectId: string,
+    @Body() dto: TransferProjectOwnershipDto,
+  ) {
+    return this.projectsService.transferOwnership(userId, projectId, dto);
   }
 }

@@ -8,4 +8,15 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
+// Attach the access token to authenticated requests.
+apiClient.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem("taskflow_access_token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
 export default apiClient;

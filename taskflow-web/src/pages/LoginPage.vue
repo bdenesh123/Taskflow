@@ -131,7 +131,19 @@ async function handleSubmit() {
         </button>
       </form>
 
-      <p class="mt-8 text-center text-xs leading-5 text-muted">
+      <!-- Sign-up link -->
+      <p class="mt-8 text-center text-sm text-muted">
+        Don't have an account?
+
+        <RouterLink
+          to="/register"
+          class="font-medium text-foreground underline-offset-4 hover:underline"
+        >
+          Sign up
+        </RouterLink>
+      </p>
+
+      <p class="mt-4 text-center text-xs leading-5 text-muted">
         Securely manage your projects, tasks, and team in one place.
       </p>
     </div>

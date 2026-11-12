@@ -8,6 +8,7 @@ export class User extends Model {
   avatar_url!: string | null;
   created_at!: Date;
   updated_at!: Date;
+  deactivated_at!: Date | null;
 
   static tableName = 'users';
 
