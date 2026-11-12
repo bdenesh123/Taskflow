@@ -107,40 +107,6 @@ async function fetchTasks() {
   }
 }
 
-async function handleCreateTask() {
-  if (!newTask.value.title.trim()) {
-    createError.value = "Task title is required.";
-    return;
-  }
-
-  isCreating.value = true;
-  createError.value = "";
-
-  try {
-    const createdTask = await createPersonalTask({
-      ...newTask.value,
-      title: newTask.value.title.trim(),
-      description: newTask.value.description?.trim() || null,
-    });
-
-    tasks.value.unshift(createdTask);
-
-    newTask.value = {
-      title: "",
-      description: "",
-      priority: "medium",
-      due_date: null,
-    };
-
-    showCreateModal.value = false;
-  } catch (error) {
-    console.error("Failed to create personal task:", error);
-    createError.value = "Failed to create your task. Please try again.";
-  } finally {
-    isCreating.value = false;
-  }
-}
-
 async function handleToggleComplete(task: PersonalTask) {
   const previousValue = task.is_completed;
 
