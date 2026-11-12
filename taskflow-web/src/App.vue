@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
+import { Analytics } from "@vercel/analytics/vue";
 
 const router = useRouter();
 
@@ -90,5 +91,6 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <Analytics />
   <RouterView />
 </template>
