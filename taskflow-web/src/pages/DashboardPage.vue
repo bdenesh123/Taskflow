@@ -350,10 +350,9 @@ onMounted(loadDashboard);
 
           <div v-else class="space-y-3">
             <RouterLink
-              v-for="task in todoTasks"
+              v-for="task in inProgressTasks"
               :key="task.id"
               :to="`/projects/${task.project_id}`"
-              class="block rounded-xl border border-border p-3 transition hover:border-primary/40"
             >
               <p class="text-sm font-medium">{{ task.title }}</p>
               <p class="mt-1 text-xs text-muted">
@@ -370,7 +369,7 @@ onMounted(loadDashboard);
               <p class="mt-1 text-xs text-muted">
                 {{
                   task.due_date
-                    ? `Due ${new Date(`${task.due_date}T00:00:00`).toLocaleDateString()}`
+                    ? `Due ${formatDate(task.due_date)}`
                     : "No due date"
                 }}
               </p>
