@@ -353,19 +353,23 @@ onMounted(loadDashboard);
               v-for="task in inProgressTasks"
               :key="task.id"
               :to="`/projects/${task.project_id}`"
+              class="block rounded-xl border border-border p-3 transition hover:border-primary/40"
             >
               <p class="text-sm font-medium">{{ task.title }}</p>
+
               <p class="mt-1 text-xs text-muted">
                 {{
                   projects.find((project) => project.id === task.project_id)
                     ?.name
                 }}
               </p>
+
               <span
                 class="mt-2 inline-flex rounded-full bg-surface-secondary px-2.5 py-1 text-xs font-medium capitalize text-muted"
               >
                 {{ task.priority }} priority
               </span>
+
               <p class="mt-1 text-xs text-muted">
                 {{
                   task.due_date
