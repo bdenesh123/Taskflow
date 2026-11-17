@@ -11,10 +11,25 @@ import {
   Menu,
   Settings,
 } from "lucide-vue-next";
-import { ref } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 
 const { preference, setPreference } = useTheme();
 const isMobileMenuOpen = ref(false);
+let previousBodyOverflow = "";
+
+watch(isMobileMenuOpen, (isOpen) => {
+  if (isOpen) {
+    previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = previousBodyOverflow;
+  }
+});
+
+// Ensure scrolling is restored if the layout is unmounted
+onBeforeUnmount(() => {
+  document.body.style.overflow = previousBodyOverflow;
+});
 const router = useRouter();
 
 function logout() {
@@ -150,7 +165,7 @@ function closeMobileMenu() {
             leave-to-class="-translate-x-full"
           >
             <aside
-              class="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col border-r border-border bg-sidebar p-4 shadow-xl"
+              class="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col overflow-y-auto overscroll-contain touch-pan-y border-r border-border bg-sidebar p-4 shadow-xl"
             >
               <!-- Drawer heading -->
               <div class="mb-8 flex items-center justify-between">
