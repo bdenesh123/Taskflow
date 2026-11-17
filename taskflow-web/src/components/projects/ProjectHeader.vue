@@ -103,7 +103,7 @@ defineEmits<{
                 ($event.target as HTMLTextAreaElement).value,
               )
             "
-            rows="3"
+            rows="8"
             class="w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
             :disabled="isSavingProject"
           />

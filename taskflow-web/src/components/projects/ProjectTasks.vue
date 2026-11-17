@@ -163,7 +163,7 @@ defineEmits<{
           <textarea
             id="task-description"
             :value="newTaskDescription"
-            rows="3"
+            rows="8"
             maxlength="5000"
             placeholder="Describe what needs to be done..."
             class="w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
@@ -492,7 +492,7 @@ defineEmits<{
               <textarea
                 :id="`edit-task-description-${task.id}`"
                 :value="editTaskDescription"
-                rows="3"
+                rows="8"
                 maxlength="5000"
                 class="w-full resize-y rounded-lg border border-border bg-surface px-3 py-2.5 text-sm"
                 :disabled="isUpdatingTask"

@@ -199,7 +199,7 @@ onMounted(loadProjects);
             <textarea
               id="project-description"
               v-model="projectDescription"
-              rows="3"
+              rows="8"
               placeholder="What is this project about?"
               class="w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-muted"
             />

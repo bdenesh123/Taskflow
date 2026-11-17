@@ -145,7 +145,7 @@ defineEmits<{
         <div v-if="editingCommentId === comment.id" class="space-y-3">
           <textarea
             :value="editCommentContent"
-            rows="3"
+            rows="8"
             maxlength="5000"
             placeholder="Edit your comment..."
             class="w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-foreground"
@@ -215,7 +215,7 @@ defineEmits<{
       <form @submit.prevent="$emit('submitComment')" class="space-y-3">
         <textarea
           :value="newCommentContent"
-          rows="3"
+          rows="8"
           maxlength="5000"
           placeholder="Write your comment..."
           class="w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-foreground"

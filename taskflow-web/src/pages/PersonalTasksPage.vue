@@ -547,7 +547,7 @@ onMounted(() => {
             <textarea
               id="task-description"
               v-model="newTask.description"
-              rows="3"
+              rows="8"
               maxlength="5000"
               placeholder="Add more details..."
               class="w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-muted"
